@@ -1,6 +1,4 @@
 export interface CartonDetails {
-  id: string
-  name: string
   length: number
   width: number
   height: number
@@ -26,27 +24,24 @@ export interface PackedCarton {
   width: number
   height: number
   rotated: boolean
-  cartonId: string
-  cartonName: string
 }
 
-export interface SingleContainerResult {
-  containerNumber: number
+export interface PackingResult {
   containerType: ContainerType
   containerDimensions: ContainerDimensions
   cartonsFitted: number
+  cartonsRemaining: number
   utilizationPercentage: number
   volumeUsed: number
   volumeRemaining: number
   totalWeight: number
   packedCartons: PackedCarton[]
-  cartonBreakdown: { [cartonId: string]: number }
 }
 
-export interface PackingResult {
-  containers: SingleContainerResult[]
-  totalCartons: number
+export interface MultiContainerResult {
+  containers: PackingResult[]
+  totalCartonsFitted: number
+  totalCartonsRemaining: number
   totalContainersUsed: number
-  cartonsRemaining: { [cartonId: string]: number }
   overallUtilization: number
 }

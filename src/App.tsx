@@ -2,35 +2,26 @@ import React, { useState } from 'react'
 import { Package, Box, Ruler } from 'lucide-react'
 import CartonInput from './components/CartonInput'
 import ContainerSelector from './components/ContainerSelector'
-import ResultsDisplay from './components/ResultsDisplay'
-import VisualizationDisplay from './components/VisualizationDisplay'
-import { calculatePacking } from './utils/packingAlgorithm'
-import { CartonDetails, ContainerType, PackingResult } from './types'
+import MultiContainerResults from './components/MultiContainerResults'
+import { calculateMultiContainerPacking } from './utils/packingAlgorithm'
+import { CartonDetails, ContainerType, MultiContainerResult } from './types'
 import './App.css'
 
 function App() {
-  const [cartonTypes, setCartonTypes] = useState<CartonDetails[]>([
-    {
-      id: 'carton-1',
-      name: 'Carton 1',
-      length: 0,
-      width: 0,
-      height: 0,
-      quantity: 0,
-      weight: 0
-    }
-  ])
+  const [cartonDetails, setCartonDetails] = useState<CartonDetails>({
+    length: 0,
+    width: 0,
+    height: 0,
+    quantity: 0,
+    weight: 0
+  })
 
   const [selectedContainer, setSelectedContainer] = useState<ContainerType>('20ft')
-  const [packingResult, setPackingResult] = useState<PackingResult | null>(null)
+  const [packingResult, setPackingResult] = useState<MultiContainerResult | null>(null)
 
   const handleCalculate = () => {
-    const validCartons = cartonTypes.filter(
-      c => c.length > 0 && c.width > 0 && c.height > 0 && c.quantity > 0
-    )
-
-    if (validCartons.length > 0) {
-      const result = calculatePacking(validCartons, selectedContainer)
+    if (cartonDetails.length > 0 && cartonDetails.width > 0 && cartonDetails.height > 0 && cartonDetails.quantity > 0) {
+      const result = calculateMultiContainerPacking(cartonDetails, selectedContainer)
       setPackingResult(result)
     }
   }
@@ -55,8 +46,8 @@ function App() {
               <h2>Carton Details</h2>
             </div>
             <CartonInput 
-              cartonTypes={cartonTypes}
-              onChange={setCartonTypes}
+              cartonDetails={cartonDetails}
+              onChange={setCartonDetails}
             />
           </div>
 
@@ -78,23 +69,7 @@ function App() {
 
         <div className="results-section">
           {packingResult ? (
-            <>
-              <div className="card">
-                <div className="card-header">
-                  <Package size={20} />
-                  <h2>Loading Results</h2>
-                </div>
-                <ResultsDisplay result={packingResult} cartonTypes={cartonTypes} />
-              </div>
-
-              <div className="card visualization-card">
-                <div className="card-header">
-                  <Box size={20} />
-                  <h2>Container Visualization</h2>
-                </div>
-                <VisualizationDisplay result={packingResult} cartonTypes={cartonTypes} />
-              </div>
-            </>
+            <MultiContainerResults result={packingResult} />
           ) : (
             <div className="empty-state">
               <Package size={64} strokeWidth={1} />
